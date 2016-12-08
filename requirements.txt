@@ -1,0 +1,5 @@
+Django==1.10
+psycopg2==2.4.5
+gunicorn
+whitenoise
+python-social-auth
