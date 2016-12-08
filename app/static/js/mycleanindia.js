@@ -107,6 +107,7 @@ jQuery(function() {
         {
     	    if(marker.getDraggable()) {
         		marker.setMap(null); //just remove new marker
+                        map_initialize();
     		} else {
 		        var myData = { json_data: JSON.stringify({'csrfmiddlewaretoken': '{{csrf_token}}',
 		        	'statid': statid })  };
@@ -201,6 +202,8 @@ jQuery(function() {
             } else {
                   handleLocationError(false, infWindow, map.getCenter());
             }
+            
+            var marker_count=0;
 
             $.ajax({
                 type: 'GET',      
@@ -306,21 +309,24 @@ jQuery(function() {
 
             
             google.maps.event.addListener(map, 'rightclick', function(event) {
-                if(loggedInUser !== "AnonymousUser") {
-                    var formData = '<p><div class="marker-edit">'+
-                    '<form method="POST" name="SaveMarker" id="SaveMarker">'+
-                    '<label for="pName"><span>Description: </span><input type="text" required name="pName" class="save-name" placeholder="" maxlength="40" /></label>&nbsp&nbsp'+
-                    '<label for="pType"><span>Status: </span> <select name="pType" class="save-type"><option value="Clean">Clean</option><option value="In Progress">In Progress</option>'+
-                    '<option value="Severe">Severe</option></select></label><input type="hidden" class="status-id" name="status-id" value="new"/>'+
-                    '</form>'+
-                    '</div></p><button name="save-marker" class="save-marker">Save Location Status</button>';
+              marker_count++;
+              if(marker_count==1) {
+                  if(loggedInUser !== "AnonymousUser") {
+                      var formData = '<p><div class="marker-edit">'+
+                      '<form method="POST" name="SaveMarker" id="SaveMarker">'+
+                      '<label for="pName"><span>Description: </span><input type="text" required name="pName" class="save-name" placeholder="" maxlength="40" /></label>&nbsp&nbsp'+
+                      '<label for="pType"><span>Status: </span> <select name="pType" class="save-type"><option value="Clean">Clean</option><option value="In Progress">In Progress</option>'+
+                      '<option value="Severe">Severe</option></select></label><input type="hidden" class="status-id" name="status-id" value="new"/>'+
+                      '</form>'+
+                      '</div></p><button name="save-marker" class="save-marker">Save Location Status</button>';
 
-                    createStatusReports(event.latLng, 'New Location Status', formData, loggedInUser, true, true, true, "https://i.imgur.com/HBBgM43.png");
+                      createStatusReports(event.latLng, 'New Location Status', formData, loggedInUser, true, true, true, "https://i.imgur.com/HBBgM43.png");
                 }
                 else {
                     $('#myAccount').modal('toggle');
                     $('#myAccount').modal('show');
                 }
+              }
             });                            
         }
 
