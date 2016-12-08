@@ -41,10 +41,23 @@ jQuery(function() {
                         var severe_stat = data.Severe;
                         var clean_stat = data.Clean;
                         var progress_stat = data.in_progress;          
-                        document.getElementById("severe_stat").innerHTML = severe_stat;
-                        document.getElementById("clean_stat").innerHTML = clean_stat;
-                        document.getElementById("progress_stat").innerHTML = progress_stat;
-                        //console.log(progress_stat);
+                        
+                        var allStatElement = document.getElementById("allStats").getContext('2d');
+                        var allStats = new Chart(allStatElement, {
+                          type: 'pie',
+                          data: {
+                            labels: ["Clean", "Severe", "In Progress"],
+                            datasets: [{
+                              backgroundColor: [
+                                "#2ecc71",
+                                "#e74c3c",
+                                "#f1c40f"
+                              ],
+                              data: [clean_stat, severe_stat, progress_stat]
+                            }]
+                          }
+                        });
+
                 },
                 error:function (xhr, ajaxOptions, thrownError){
                     console.log("Something went wrong!");
@@ -60,7 +73,6 @@ jQuery(function() {
                 map: map,
                 draggable:DragAble,
                 animation: google.maps.Animation.DROP,
-                title: MapTitle,
                 icon: iconPath
             });
            

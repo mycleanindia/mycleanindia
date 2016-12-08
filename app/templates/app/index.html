@@ -12,7 +12,8 @@
         <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
         <script type="text/javascript" src="{% static "js/mycleanindia.js" %}"></script>
         <script type="text/javascript" src="{% static "js/bootstrap.min.js" %}"></script>
-        <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?key=AIzaSyAO9viVY0VNfHCfyAVQ_nfmCuz6CVb3RZI&libraries=places"></script>          
+        <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?key=AIzaSyAO9viVY0VNfHCfyAVQ_nfmCuz6CVb3RZI&libraries=places"></script>  
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>        
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -159,13 +160,9 @@
             <div class="modal-content">
                 <div class="modal-body">
                 <center>
-                <a style="font-family: 'Delius Unicase', cursive; text-decoration:none" href="#">Statistics</a><br>
-                <img src="http://i.imgur.com/frAyAnA.png" height="100px" width="100px" style="padding:20px;">
-                <img src="http://i.imgur.com/7n92htp.png" height="100px" width="100px" style="padding:20px;">
-                <img src="http://i.imgur.com/HZDldUw.png" height="100px" width="100px" style="padding:20px;"><br>
-                <p id="clean_stat" style="font-family: 'Delius Unicase', cursive; text-decoration:none; padding:47px; display:inline"></p>
-                <p id="progress_stat" style="font-family: 'Delius Unicase', cursive; text-decoration:none; padding:47px; display:inline"></p>
-                <p id="severe_stat" style="font-family: 'Delius Unicase', cursive; text-decoration:none; padding:47px; display:inline"></p>
+                <a style="font-family: 'Delius Unicase', cursive; text-decoration:none" href="#">Statistics</a><hr>
+                <canvas id="allStats"></canvas>
+                <p>Refresh the map canvas to view all time report count.</p>
                 </center>
                 </div>
             </div>
