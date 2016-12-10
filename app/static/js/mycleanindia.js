@@ -25,7 +25,7 @@ jQuery(function() {
             map_initialize();
         });
 
-		$("input:text").keypress(function(event) {
+		    $("input:text").keypress(function(event) {
             if (event.keyCode == 13) {
                 event.preventDefault();
                 return false;
@@ -75,6 +75,19 @@ jQuery(function() {
                 animation: google.maps.Animation.DROP,
                 icon: iconPath
             });
+
+            var popwindow = new google.maps.InfoWindow();
+
+            if(MapTitle != "New Location Status") {
+                google.maps.event.addListener(marker, 'mouseover', function() {
+                    popwindow.setContent('<div style="padding-left:20px;"><center><img src="https://t3.ftcdn.net/jpg/00/88/69/84/240_F_88698445_zHpZyrhMreVVWBs1WP3iLiTwidTfn4Jd.jpg" height="120px"></center><hr><b>Description:</b> ' + MapTitle + '</div>');
+                    setTimeout(function() { popwindow.open(map, marker) }, 100);
+
+                });
+                google.maps.event.addListener(marker, 'mouseout', function() {
+                    popwindow.close();
+                });
+            }
            
             var contentString = $('<div class="marker-info-win">'+
             '<div class="marker-inner-win"><span class="info-content">'+

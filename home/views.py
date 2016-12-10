@@ -14,20 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.conf.urls import url, include
-from django.contrib import admin
-import django.contrib.auth.views
-from django.conf import settings
+#from __future__ import print_function
+from django.template.response import TemplateResponse
 
-admin.site.site_header = settings.ADMIN_SITE_HEADER
-admin.site.site_title = settings.ADMIN_SITE_TITLE
 
-urlpatterns = [
-	url(r'', include('home.urls')),
-	url(r'', include('app.urls')),
-    url(r'^admin/', admin.site.urls),
-    url(r'^app/', include('app.urls')),
-    url(r'^home/', include('home.urls')),
-    url('', include('social.apps.django_app.urls', namespace='social')),
-]
-
+def index(request):
+    """
+    Args: request.
+    Returns: default application home view.
+    """
+    return TemplateResponse(request, 'app/home.html',)

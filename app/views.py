@@ -34,7 +34,7 @@ def index(request):
     Args: request.
     Returns: default application view.
     """
-    return TemplateResponse(request, 'app/index.html',)
+    return TemplateResponse(request, 'app/app.html',)
 
 
 @csrf_exempt

@@ -21,7 +21,7 @@ class statusReport(models.Model):
     """
     The model to manage the status reports.
     """
-    description = models.CharField(max_length=30)
+    description = models.CharField(max_length=80)
     status = models.CharField(max_length=30)
     coordinates = models.CharField(max_length=30)
     owner = models.CharField(max_length=100, default="NULL")

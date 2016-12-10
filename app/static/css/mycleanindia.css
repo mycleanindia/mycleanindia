@@ -293,6 +293,10 @@ only screen and (max-width: 767px) {
     font-size: 20px;
 }
 
+.glyphicon-home {
+    font-size: 20px;
+}
+
 .glyphicon-heart {
     top: 2px;
 }
