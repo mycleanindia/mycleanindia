@@ -190,7 +190,7 @@ jQuery(function() {
                 zoomControl: true,
                 zoomControlOptions: {
                 style: google.maps.ZoomControlStyle.SMALL
-            },
+                },
                 scaleControl: true,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
@@ -214,7 +214,7 @@ jQuery(function() {
             } else {
                   handleLocationError(false, infWindow, map.getCenter());
             }
-            
+
             var marker_count=0;
 
             $.ajax({
@@ -249,16 +249,16 @@ jQuery(function() {
                      		severe = 'selected';
                      	}
 
-                     	var formData = '<p><div class="marker-edit">'+
+                    var formData = '<p><div class="marker-edit">'+
                			'<form method="POST" name="SaveMarker" id="SaveMarker">'+
                 		'<label for="pName"><span>Description: </span><input type="text" required name="pName" value="' + name +'"class="save-name" placeholder="" maxlength="40" /></label>&nbsp&nbsp'+
                 		'<label for="pType"><span>Status: </span> <select name="pType" class="save-type"><option value="Clean"'+ clean +'>Clean</option><option value="In Progress"'+ inprogress +'>In Progress</option>'+
-            			'<option value="Severe"'+ severe +'>Severe</option></select></label>'+'<input type="hidden" name="status-id" class="status-id" value="' + id + '"/>'+
+            			  '<option value="Severe"'+ severe +'>Severe</option></select></label>'+'<input type="hidden" name="status-id" class="status-id" value="' + id + '"/>'+
                 		'</form>'+
                 		'</div></p><button name="save-marker" class="save-marker">Save Location Status</button>';
                      	
-                      	createStatusReports(point, name, formData, owner, false, false, false, imageType);
-					});
+                    createStatusReports(point, name, formData, owner, false, false, false, imageType);
+					        });
                 }                  
             });
 
@@ -270,7 +270,7 @@ jQuery(function() {
             }
 
             var input = document.getElementById('searchTextField');         
-		    var autocomplete = new google.maps.places.Autocomplete(input, {
+		        var autocomplete = new google.maps.places.Autocomplete(input, {
 		        types: ["geocode"]
 		    });          
 		    
@@ -312,35 +312,46 @@ jQuery(function() {
 		        });
 		    });
 		     
-		    function moveStatusPointer(placeName, latlng){
+		    function moveStatusPointer(placeName, latlng) {
 		        marker.setIcon(image);
 		        marker.setPosition(latlng);
 		        infowindow.setContent(placeName);
 		        infowindow.open(map, marker);
-            }
-
-            
-            google.maps.event.addListener(map, 'rightclick', function(event) {
-              marker_count++;
-              if(marker_count==1) {
-                  if(loggedInUser !== "AnonymousUser") {
-                      var formData = '<p><div class="marker-edit">'+
-                      '<form method="POST" name="SaveMarker" id="SaveMarker">'+
-                      '<label for="pName"><span>Description: </span><input type="text" required name="pName" class="save-name" placeholder="" maxlength="40" /></label>&nbsp&nbsp'+
-                      '<label for="pType"><span>Status: </span> <select name="pType" class="save-type"><option value="Clean">Clean</option><option value="In Progress">In Progress</option>'+
-                      '<option value="Severe">Severe</option></select></label><input type="hidden" class="status-id" name="status-id" value="new"/>'+
-                      '</form>'+
-                      '</div></p><button name="save-marker" class="save-marker">Save Location Status</button>';
-
-                      createStatusReports(event.latLng, 'New Location Status', formData, loggedInUser, true, true, true, "https://i.imgur.com/HBBgM43.png");
-                }
-                else {
-                    $('#myAccount').modal('toggle');
-                    $('#myAccount').modal('show');
-                }
-              }
-            });                            
         }
 
+        google.maps.event.addListener(map, "click", function(event) {
+            infWindow.close();
+        });
+        
+        google.maps.event.addListener(map, 'rightclick', function(event) {
+            $.ajax({
+                type: 'GET',      
+                url:  'http://ws.geonames.org/countryCodeJSON?lat=' + event.latLng.lat() + '&lng=' + event.latLng.lng() + '&username=mycleanindia',
+                dataType: 'json',
+                success: function(data) { 
+                    if(data.countryName == 'India') {
+                        marker_count++;
+                        if(marker_count==1) {
+                            if(loggedInUser !== "AnonymousUser") {
+                                var formData = '<p><div class="marker-edit">'+
+                                '<form method="POST" name="SaveMarker" id="SaveMarker">'+
+                                '<label for="pName"><span>Description: </span><input type="text" required name="pName" class="save-name" placeholder="" maxlength="40" /></label>&nbsp&nbsp'+
+                                '<label for="pType"><span>Status: </span> <select name="pType" class="save-type"><option value="Clean">Clean</option><option value="In Progress">In Progress</option>'+
+                                '<option value="Severe">Severe</option></select></label><input type="hidden" class="status-id" name="status-id" value="new"/>'+
+                                '</form>'+
+                                '</div></p><button name="save-marker" class="save-marker">Save Location Status</button>';
+
+                                createStatusReports(event.latLng, 'New Location Status', formData, loggedInUser, true, true, true, "https://i.imgur.com/HBBgM43.png");
+                            }
+                            else {
+                                $('#myAccount').modal('toggle');
+                                $('#myAccount').modal('show');
+                            }
+                        }
+                    }
+                }
+            });
+        });                            
+      }
     });
 });
