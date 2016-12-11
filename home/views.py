@@ -23,4 +23,6 @@ def index(request):
     Args: request.
     Returns: default application home view.
     """
+    if request.user.is_authenticated():
+    	return TemplateResponse(request, 'app/app.html',)
     return TemplateResponse(request, 'app/home.html',)
