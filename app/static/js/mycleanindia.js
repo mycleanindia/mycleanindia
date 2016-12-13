@@ -66,6 +66,46 @@ jQuery(function() {
             });
         }
 
+
+        // Report Feeds Method
+        reportFeeds = function() {
+            $.ajax({
+                type: "GET",
+                url: "fetch_report_feeds",
+                dataType: 'json',              
+                success: function (data) {
+                    var feedBoxData = '';
+                    if(typeof data[0] !== "undefined") {
+                        $.each(data, function(i, item) {
+                            var statusType = data[i].status;
+                            var imageType = '';
+                            var address = data[i].address;
+
+                            if(statusType == "Clean") {
+                                imageType = 'https://i.imgur.com/8jcjVUl.png';
+                            }
+                            else if(statusType == "In Progress") {
+                                imageType = 'https://i.imgur.com/TClWkgY.png';
+                            }
+                            else if(statusType == "Severe") {
+                                imageType = 'https://i.imgur.com/FXle0qD.png';
+                            }
+
+                            feedBoxData = feedBoxData + '<div class="feed-box" style="padding-left:10px;"><img src="https://cdn2.iconfinder.com/data/icons/rcons-user/32/male-shadow-fill-circle-512.png" style="margin-top:8px; display:inline" height="35px" width="35px"><p style="display:inline; padding-top:-10px"> ' + data[i].owner + '</p><div class="pull-right" style="padding-right:10px; padding-top:8px"><i class="fa fa-thumbs-up" style="padding-right:10px; color: #c12267; font-size: 12px" aria-hidden="true"> ' + data[i].likes + '</i><i class="fa fa-thumbs-down" style="color: #c12267; font-size: 12px" aria-hidden="true"> ' + data[i].unlikes + '</i></div><br><p style="font-size:12px; padding-top:10px;padding-bottom:5px; padding-left:4px;">' + data[i].description + '<br><img src="' + imageType + '" height="10px" width="10px"> &nbspnear ' + address + '.</p></div>'; 
+                            //feedBoxData = feedBoxData + '<div class="feed-box" style="padding-left:10px;"><img src="https://cdn2.iconfinder.com/data/icons/rcons-user/32/male-shadow-fill-circle-512.png" style="margin-top:8px" height="35px" width="35px"> ' + data[i].owner + '<div class="pull-right" style="padding-right:10px; padding-top:8px"><i class="fa fa-thumbs-up" style="padding-right:10px; color: #c12267; font-size: 12px" aria-hidden="true"> ' + data[i].likes + '</i><i class="fa fa-thumbs-down" style="color: #c12267; font-size: 12px" aria-hidden="true"> ' + data[i].unlikes + '</i></div><br><p style="font-size:12px; padding-top:10px;padding-bottom:5px">' + data[i].description + '<br><img src="' + imageType + '"> &nbspat ' + address + '.</p></div>';
+                        });
+                    }
+                    else {
+                        feedBoxData = '<div><center><img src="http://i.imgur.com/KUsOXVu.png" style="padding-top:90px;" height="20%" width="20%"><br><br><p style="font-size:12px; color: #2f4f4f">Eh! It seems like you are the first one here :)<br>Start by searching for the place you would like to report for<br>and drop a status report!<br>or<br>Click on the help icon above to get started.</p></center></div>'
+                    }
+                    $("#feedBox").html(feedBoxData);
+                }
+            });
+        };
+
+        var interval = 5000;
+        setInterval(reportFeeds, interval);
+
         function createStatusReports(MapPos, MapTitle, MapDesc, owner, InfoOpenDefault, DragAble, Removable, iconPath)
         {                
             var marker = new google.maps.Marker({
@@ -171,20 +211,28 @@ jQuery(function() {
 	            });
         	}
         	else {
-	            var myData = { json_data: JSON.stringify({'csrfmiddlewaretoken': '{{csrf_token}}',
-	            	'name':mName,'latlang' : mLatLang, 'type' : mType, 'owner': owner})  };    
-	            $.ajax({
-	              type: "POST",
-	              url: "save_new_status_reports",
-	              data: myData,
-	              success:function(data){
-	                    map_initialize();
-	                },
-	                error:function (xhr, ajaxOptions, thrownError){
-	                	console.log("Something went wrong!")
-	                    alert(thrownError);
-	                }
-	            });
+                $.ajax({
+                    type: 'GET',      
+                    url:  'http://maps.googleapis.com/maps/api/geocode/json?latlng=' + mLatLang + '&sensor=false',
+                    dataType: 'json',
+                    success: function(data) { 
+                        var myData = { json_data: JSON.stringify({'csrfmiddlewaretoken': '{{csrf_token}}',
+                            'name':mName,'latlang' : mLatLang, 'type' : mType, 'owner': owner, 'address': data.results[0].formatted_address})  };    
+                        $.ajax({
+                          type: "POST",
+                          url: "save_new_status_reports",
+                          data: myData,
+                          success:function(data){
+                                map_initialize();
+                            },
+                            error:function (xhr, ajaxOptions, thrownError){
+                                console.log("Something went wrong!")
+                                alert(thrownError);
+                            }
+                        });
+                    }
+                });
+
         	}
         }
 
@@ -195,6 +243,7 @@ jQuery(function() {
         function map_initialize()
         {
             statistics();
+            reportFeeds();
             var googleMapOptions =
             {
                 center: mapCenter,
@@ -337,34 +386,36 @@ jQuery(function() {
         });
         
         google.maps.event.addListener(map, 'rightclick', function(event) {
-            $.ajax({
-                type: 'GET',      
-                url:  'http://ws.geonames.org/countryCodeJSON?lat=' + event.latLng.lat() + '&lng=' + event.latLng.lng() + '&username=mycleanindia',
-                dataType: 'json',
-                success: function(data) { 
-                    if(data.countryName == 'India') {
                         marker_count++;
                         if(marker_count==1) {
                             if(loggedInUser !== "AnonymousUser") {
-                                var formData = '<p><div class="marker-edit">'+
-                                '<form method="POST" name="SaveMarker" id="SaveMarker">'+
-                                '<label for="pName"><span>Description: </span><input type="text" required name="pName" class="save-name" placeholder="" maxlength="40" /></label>&nbsp&nbsp'+
-                                '<label for="pType"><span>Status: </span> <select name="pType" class="save-type"><option value="Clean">Clean</option><option value="In Progress">In Progress</option>'+
-                                '<option value="Severe">Severe</option></select></label><input type="hidden" class="status-id" name="status-id" value="new"/>'+
-                                '</form>'+
-                                '</div></p><button name="save-marker" class="save-marker">Save Location Status</button>';
+                                $.ajax({
+                                    type: 'GET',      
+                                    url:  'http://ws.geonames.org/countryCodeJSON?lat=' + event.latLng.lat() + '&lng=' + event.latLng.lng() + '&username=mycleanindia',
+                                    dataType: 'json',
+                                    success: function(data) { 
+                                        if(data.countryName == 'India') {
+                                            var formData = '<p><div class="marker-edit">'+
+                                            '<form method="POST" name="SaveMarker" id="SaveMarker">'+
+                                            '<label for="pName"><span>Description: </span><input type="text" required name="pName" class="save-name" placeholder="" maxlength="40" /></label>&nbsp&nbsp'+
+                                            '<label for="pType"><span>Status: </span> <select name="pType" class="save-type"><option value="Clean">Clean</option><option value="In Progress">In Progress</option>'+
+                                            '<option value="Severe">Severe</option></select></label><input type="hidden" class="status-id" name="status-id" value="new"/>'+
+                                            '</form>'+
+                                            '</div></p><button name="save-marker" class="save-marker">Save Location Status</button>';
 
-                                createStatusReports(event.latLng, 'New Location Status', formData, loggedInUser, true, true, true, "https://i.imgur.com/HBBgM43.png");
+                                            createStatusReports(event.latLng, 'New Location Status', formData, loggedInUser, true, true, true, "https://i.imgur.com/HBBgM43.png");
+                                        }
+                                    }
+                                });
                             }
                             else {
-                                $('#myAccount').modal('toggle');
-                                $('#myAccount').modal('show');
+                                console.log('aa');
+                                $('#myAccount').modal({
+                                    show: true
+                                })
                             }
                         }
-                    }
-                }
-            });
-        });                            
-      }
+                });                           
+            }
     });
 });

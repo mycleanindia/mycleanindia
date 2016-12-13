@@ -25,3 +25,15 @@ class statusReport(models.Model):
     status = models.CharField(max_length=30)
     coordinates = models.CharField(max_length=30)
     owner = models.CharField(max_length=100, default="NULL")
+    likes = models.IntegerField(default=0)
+    unlikes = models.IntegerField(default=0)
+    address = models.CharField(max_length=200, default="Unknown")
+
+
+class reactionTable(models.Model):
+	"""
+	Manages reactions on a report.
+	"""		
+	reacting_user = models.CharField(max_length=100)
+	reaction_report = models.IntegerField()
+	vote = models.IntegerField(default=2)

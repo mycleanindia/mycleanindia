@@ -5,7 +5,7 @@
         <title>SwachhBharat &mdash; MyCleanIndia &mdash; Track India's Cleanliness Status.</title>
         <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
         <link href="{% static "css/mycleanindia.css" %}" rel="stylesheet">
-        <link rel="shortcut icon" type="image/png" href="{% static "images/icon.png" %}"/>
+        <link rel="shortcut icon" type="image/png" href="http://i.imgur.com/KUsOXVu.png"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://fonts.googleapis.com/css?family=Delius+Unicase|Pacifico" rel="stylesheet"> 
         <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -42,13 +42,13 @@
     <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
-          <a class="navbar-brand" style="font-family: 'Pacifico', cursive; outline:none; color: #c12267" href="/app"><img src="http://www.iconsdb.com/icons/download/deep-pink/leaf-512.png" style="height:25px;width:25px; display:inline; margin-top:-3px; outline:none"> mycleanindia</a>
+          <a class="navbar-brand" style="font-family: 'Pacifico', cursive; outline:none; color: #c12267" href="/app"><img src="http://i.imgur.com/KUsOXVu.png" style="height:25px;width:25px; display:inline; margin-top:-3px; outline:none"> mycleanindia</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <div class="col-sm-7 col-md-7">
                 <form class="navbar-form" role="search">
                 <div class="input-group">
-                    <input id="searchTextField" type="text" class="form-control" style="margin-top:2px; border-radius: 16px; border: 1px #c12267 solid; width:270%;height: 31px;" placeholder="Search for yards, pavements, monuments or your own neighbourhood ...">
+                    <input id="searchTextField" type="text" autofocus class="form-control" style="margin-top:2px; border-radius: 16px; border: 1px #c12267 solid; width:270%;height: 31px;" placeholder="Search for yards, pavements, monuments or your own neighbourhood ...">
                     <div class="input-group-btn">
                         <!--button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button-->
                     </div>
@@ -62,6 +62,7 @@
                             <script type="text/javascript">{% if request.user %}loggedInUser = "{{request.user}}"{% else %}loggedInUser = null;{% endif %}</script> 
                             <a href="#" style="color: #c12267" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{request.user.first_name}} <span class="caret"></span></a>
                             <ul class="dropdown-menu">
+                                <li><a style="color: #c12267" data-toggle="modal" href="#dashboard">Dashboard</a></li>
                                 <li><a style="color: #c12267" href="/logout">Logout</a></li>
                             </ul>
                         </li>
@@ -82,8 +83,14 @@
       </div>
     </nav>
 
-    <div id='wrapper'>
-        <div id="google_map"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 gmap">
+                <div id="google_map"></div>
+            </div>
+            <div id="feedBox" class="col-md-4 feeds">
+            </div>
+        </div>
     </div>
 
     <div id="myAccount" class="modal" role="dialog">
@@ -92,7 +99,7 @@
         <div class="modal-content">
             <div class="modal-body">
                 <center>
-                <a style="font-family: 'Delius Unicase', cursive; text-decoration:none" href="/"><img src="{% static "images/icon.png" %}" style="height:25px;width:25px; display:inline; margin-top:0px;"> My Clean India</a><br><br>
+                <a style="font-family: 'Pacifico', cursive; text-decoration:none; color: #c12267" href="#"><img src="http://i.imgur.com/KUsOXVu.png" style="height:25px;width:25px; display:inline; margin-top:0px;"> mycleanindia</a><hr>
                 <p>
                     <a class="btn btn-primary social-login-btn social-facebook" href="/login/facebook"><i class="fa fa-facebook"></i></a>
                     <a class="btn btn-primary social-login-btn social-twitter" href="/login/twitter"><i class="fa fa-twitter"></i></a>
@@ -122,12 +129,22 @@
         </div>
     </div>
 
+    <div id="dashboard" class="modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <a style="text-decoration:none; color: #333; font-size: 15px;" href="/">Dashboard</a><hr>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="help" class="modal" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body">
                 <center>
-                <a style="font-family: 'Delius Unicase', cursive; text-decoration:none" href="#">HOW TO USE ?</a><br><br>
+                <a style="font-family: 'Delius Unicase', cursive; text-decoration:none" href="#">HOW TO USE ?</a><hr>
                 </center>
                 <ul>It is as simple as sending a text message. Just follow the four easy steps given below and help our country in the most effective way.</ul>
                 <ul>
