@@ -29,5 +29,7 @@ urlpatterns = [
         views.save_new_status_reports, name='save_new_status_reports'),
     url(r'^fetch_statistics$', 
         views.fetch_statistics, name='fetch_statistics'),
+    url(r'^fetch_report_feeds$', 
+        views.fetch_report_feeds, name='fetch_report_feeds'),
     url(r'^logout/$', views.logout, name='logout'),
 ]

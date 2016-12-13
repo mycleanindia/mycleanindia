@@ -98,7 +98,8 @@ def save_new_status_reports(request):
         status=data_dict['type']
         coordinates=data_dict['latlang']
         owner=data_dict['owner']
-        p = statusReport(description=description, status=status, coordinates=coordinates, owner=owner)
+        address=data_dict['address']
+        p = statusReport(description=description, status=status, coordinates=coordinates, owner=owner, address=address)
         p.save()
         return JsonResponse('Success', safe=False)
 
@@ -116,6 +117,18 @@ def fetch_statistics(request):
             status_record[str(each.status)] += each.count
         status_record['in_progress'] = status_record.pop('In Progress')
         return JsonResponse(status_record, safe=False)
+
+
+@csrf_exempt
+def fetch_report_feeds(request):
+    """
+    Args: request.
+    Returns: Fetched status reports from the datastore.
+    """
+    if request.method == 'GET' and request.is_ajax():
+        statuses = statusReport.objects.values('id','description', 'status', 'coordinates', 'owner', 'likes', 'unlikes', 'address').order_by('-id') 
+        #print(statuses_json.content)
+        return JsonResponse(list(statuses), safe=False)
 
 
 def logout(request):
