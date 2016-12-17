@@ -28,6 +28,7 @@ class statusReport(models.Model):
     likes = models.IntegerField(default=0)
     unlikes = models.IntegerField(default=0)
     address = models.CharField(max_length=200, default="Unknown")
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class reactionTable(models.Model):

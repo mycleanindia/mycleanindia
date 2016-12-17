@@ -15,6 +15,7 @@
 # limitations under the License.
 
 #from __future__ import print_function
+import datetime
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -44,9 +45,25 @@ def fetch_status_reports(request):
     Returns: Fetched status reports from the datastore.
     """
     if request.method == 'GET' and request.is_ajax():
-        statuses = statusReport.objects.values('id','description', 'status', 'coordinates', 'owner')
+        statuses = statusReport.objects.values(
+            'id','description', 'status', 'coordinates', 'owner')
         #print(statuses_json.content)
         return JsonResponse(list(statuses), safe=False)
+
+
+@csrf_exempt
+def fetch_my_status_reports(request):
+    """
+    Args: request.
+    Returns: Fetched status reports from the datastore.
+    """
+    if request.user.is_authenticated():
+        if request.method == 'GET' and request.is_ajax():
+            statuses = statusReport.objects.values(
+                'id', 'description', 'status', 'coordinates', 'address').filter(
+                owner=request.user.get_username())
+            #print(statuses)
+            return JsonResponse(list(statuses), safe=False)
 
 
 @csrf_exempt
@@ -99,7 +116,9 @@ def save_new_status_reports(request):
         coordinates=data_dict['latlang']
         owner=data_dict['owner']
         address=data_dict['address']
-        p = statusReport(description=description, status=status, coordinates=coordinates, owner=owner, address=address)
+        p = statusReport(
+            description=description, status=status, coordinates=coordinates,
+             owner=owner, address=address)
         p.save()
         return JsonResponse('Success', safe=False)
 
@@ -123,12 +142,45 @@ def fetch_statistics(request):
 def fetch_report_feeds(request):
     """
     Args: request.
-    Returns: Fetched status reports from the datastore.
+    Returns: Fetches status reports from the datastore.
     """
     if request.method == 'GET' and request.is_ajax():
-        statuses = statusReport.objects.values('id','description', 'status', 'coordinates', 'owner', 'likes', 'unlikes', 'address').order_by('-id') 
+        statuses = statusReport.objects.values(
+            'id','description', 'status', 'coordinates', 'owner',
+             'likes', 'unlikes', 'address').order_by('-id') 
         #print(statuses_json.content)
         return JsonResponse(list(statuses), safe=False)
+
+
+@csrf_exempt
+def fetch_contributions(request):
+    """
+    Args: request.
+    Returns: Fetches contributions of a user.
+    """
+    if request.user.is_authenticated():
+        if request.method == 'GET' and request.is_ajax():
+            now = datetime.datetime.now()
+            record = dict()
+            months = { 1: "Jan", 2: "Feb", 3: "Mar",
+                4: "Apr", 5: "May", 6: "Jun", 7: "Jul", 8: "Aug",
+                9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec"}
+            for i in xrange(0,6):
+                temp = now.month - i
+                if temp <= 0:
+                    record[temp + 12] = (
+                        statusReport.objects.filter(
+                            created_at__month=temp+12).filter(
+                            owner=request.user.get_username()).count())
+                    record[months[temp + 12]] = record.pop(temp + 12)
+                else:
+                    record[temp] = (
+                        statusReport.objects.filter(
+                            created_at__month=temp).filter(
+                            owner=request.user.get_username()).count())
+                    record[months[temp]] = record.pop(temp)
+            print(record)
+            return JsonResponse(record, safe=False)
 
 
 def logout(request):

@@ -27,6 +27,11 @@ body {
     margin-bottom: 8px;
 }
 
+.myReportBox {
+    overflow-y: scroll;
+    height: 80vh;
+}
+
 .gmap {
     height:100vh;
 
@@ -365,4 +370,9 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
 }
 .gmnoprint div {
     background:white !important;
+}
+
+body.modal-open .modal.in {
+  display: flex !important;
+  align-items: center;
 }

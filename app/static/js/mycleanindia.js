@@ -33,9 +33,148 @@ jQuery(function() {
 		$("input:text").keypress(function(event) {
             if (event.keyCode == 13) {
                 event.preventDefault();
+                $('#cardContainer').fadeTo("slow",1);
                 return false;
             }
         });
+
+        $('#searchTextField').on('focusin',function(e){
+            $('#cardContainer').fadeTo("slow",0.3);
+        });
+
+        $('#searchTextField').on('focusout',function(e){
+            $('#cardContainer').fadeTo("slow",1);
+        });
+
+        $('#searchTextField').on('input',function(e){
+            $('#cardContainer').fadeTo("slow",0.3);
+        });
+
+        fetch_my_reports();
+
+        function fetch_my_reports() {
+            var myInfoWindow = new google.maps.InfoWindow();
+            $.ajax({
+                type: 'GET',      
+                url:  'fetch_my_status_reports',
+                dataType: 'json',
+                success: function(data) { 
+                    $.each(data, function(i, item) {
+                        var table = document.getElementById("reportDataTable");
+                        var row = table.insertRow(0);
+                        var cell1 = row.insertCell(0);
+                        var cell2 = row.insertCell(1);
+                        var cell3 = row.insertCell(2);
+                        var cell4 = row.insertCell(3);
+                        cell1.innerHTML = data[i].description;
+                        cell2.innerHTML = data[i].status;
+                        cell3.innerHTML = data[i].address;
+
+                        var loc = data[i].coordinates.split(',');
+                        var point = new google.maps.LatLng(parseFloat(loc[0]),parseFloat(loc[1]));
+
+                        cell4.innerHTML = '<a class="changeMarkerClass" id="change'+ data[i].id +'" href="#"><i class="glyphicon glyphicon-edit">change</i></a>';
+
+                        var constructedChangeId = "#change" + data[i].id;
+
+                        $(document).on("click", constructedChangeId, function(){
+                            map_initialize(10, point);
+                            $('#dashboard').modal('hide');
+                        });
+                    });
+                },
+                error:function (xhr, ajaxOptions, thrownError){
+                    console.log("Something went wrong!");
+                    //alert(thrownError);
+                }               
+            });
+        }
+
+        contributions();
+
+        function contributions() {
+
+            $.ajax({
+                type: 'GET',      
+                url:  'fetch_contributions',
+                dataType: 'json',
+                success: function(data) { 
+                    var allMonths = ['Jan','Feb','Mar', 'Apr','May','Jun',
+                        'Jul','Aug','Sep','Oct','Nov','Dec'];
+                    var contribVal = [];
+                    var contribMonth = [];
+                    var cMonth = [];
+                    var cVal = [];
+
+                    for (var prop in data) {
+                        contribVal.push(data[prop]);
+                        contribMonth.push(prop);
+                    }
+
+                    for(var month in contribMonth) {
+                        cMonth[allMonths.indexOf(contribMonth[month])] = contribMonth[month];
+                        cVal[allMonths.indexOf(contribMonth[month])] = contribVal[month];
+                    }
+
+                    Array.prototype.clean = function(deleteValue) {
+                        for (var i = 0; i < this.length; i++) {
+                            if (this[i] == deleteValue) {         
+                                this.splice(i, 1);
+                                i--;
+                            }
+                        }
+                      return this;
+                    };
+
+                    cMonth.clean(undefined);
+                    cVal.clean(undefined);
+                    
+                    var data = {
+                        labels: cMonth,
+                        datasets: [
+                            {
+                                label: "Reports",
+                                fill: false,
+                                lineTension: 0.1,
+                                backgroundColor: "rgba(75,192,192,0.4)",
+                                borderColor: "rgba(75,192,192,1)",
+                                borderCapStyle: 'butt',
+                                borderDash: [],
+                                borderDashOffset: 0.0,
+                                borderJoinStyle: 'miter',
+                                pointBorderColor: "rgba(75,192,192,1)",
+                                pointBackgroundColor: "#fff",
+                                pointBorderWidth: 1,
+                                pointHoverRadius: 5,
+                                pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                                pointHoverBorderColor: "rgba(220,220,220,1)",
+                                pointHoverBorderWidth: 2,
+                                pointRadius: 1,
+                                pointHitRadius: 10,
+                                data: cVal,
+                                spanGaps: false,
+                            }
+                        ]
+                    };
+
+                    var myContributionsElement = document.getElementById("myContributions").getContext('2d');
+                        var myContributions = new Chart(myContributionsElement, {
+                            type: 'line',
+                            data: data,
+                            options: {
+                                legend: {
+                                    display: false
+                                }
+                            }
+                    });
+                },
+                error:function (xhr, ajaxOptions, thrownError){
+                    console.log("Something went wrong!");
+                    //alert(thrownError);
+                }               
+            });
+
+        }
         
         function statistics() {
             $.ajax({
@@ -248,6 +387,7 @@ jQuery(function() {
         {
             statistics();
             reportFeeds();
+
             var googleMapOptions =
             {
                 center: mapCenterValue,

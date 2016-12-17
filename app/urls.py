@@ -31,5 +31,9 @@ urlpatterns = [
         views.fetch_statistics, name='fetch_statistics'),
     url(r'^fetch_report_feeds$', 
         views.fetch_report_feeds, name='fetch_report_feeds'),
+    url(r'^fetch_my_status_reports$', 
+        views.fetch_my_status_reports, name='fetch_my_status_reports'),
+    url(r'^fetch_contributions$', 
+        views.fetch_contributions, name='fetch_contributions'),
     url(r'^logout/$', views.logout, name='logout'),
 ]
