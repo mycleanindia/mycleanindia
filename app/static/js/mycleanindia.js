@@ -20,9 +20,14 @@ jQuery(function() {
 
 	$(document).ready(function() {
 
+        // Initial configuration
+        var initialMapCenter = new google.maps.LatLng(22.9734, 80.6569);
+        var map;
+        var zoomLevel = 5; 
+
         $(".rotate").click(function(){
             $(this).toggleClass("down"); 
-            map_initialize();
+            map_initialize(map.getZoom(), map.getCenter());
         });
 
 		$("input:text").keypress(function(event) {
@@ -171,7 +176,7 @@ jQuery(function() {
         {
     	    if(marker.getDraggable()) {
         		marker.setMap(null); //just remove new marker
-                        map_initialize();
+                        map_initialize(map.getZoom(), map.getCenter());
     		} else {
 		        var myData = { json_data: JSON.stringify({'csrfmiddlewaretoken': '{{csrf_token}}',
 		        	'statid': statid })  };
@@ -180,7 +185,7 @@ jQuery(function() {
 		          url: "delete_status_reports",
 		          data: myData,
 		          success:function(data){
-		                map_initialize();
+		                map_initialize(map.getZoom(), map.getCenter());
 		            },
 		          error:function (xhr, ajaxOptions, thrownError){
 		              console.log("Something went wrong!");
@@ -201,7 +206,7 @@ jQuery(function() {
 	              url: "update_status_reports",
 	              data: myData,
 	              success:function(data){
-	                  map_initialize();
+	                  map_initialize(map.getZoom(), map.getCenter());
 	              },
 	              error:function (xhr, ajaxOptions, thrownError){
 	                  console.log("Something went wrong!");
@@ -222,7 +227,7 @@ jQuery(function() {
                           url: "save_new_status_reports",
                           data: myData,
                           success:function(data){
-                                map_initialize();
+                                map_initialize(map.getZoom(), map.getCenter());
                             },
                             error:function (xhr, ajaxOptions, thrownError){
                                 console.log("Something went wrong!")
@@ -235,18 +240,18 @@ jQuery(function() {
         	}
         }
 
-        var mapCenter = new google.maps.LatLng(22.9734, 80.6569);
+        var initialMapCenter = new google.maps.LatLng(22.9734, 80.6569);
         var map;
-        var mapZoom; 
-        map_initialize();
-        function map_initialize()
+        var zoomLevel = 5; 
+        map_initialize(zoomLevel, initialMapCenter);
+        function map_initialize(zoomLevel, mapCenterValue)
         {
             statistics();
             reportFeeds();
             var googleMapOptions =
             {
-                center: mapCenter,
-                zoom: 5,
+                center: mapCenterValue,
+                zoom: zoomLevel,
                 panControl: true,
                 zoomControl: true,
                 zoomControlOptions: {
