@@ -25,13 +25,13 @@ jQuery(function() {
             map_initialize();
         });
 
-		    $("input:text").keypress(function(event) {
+		$("input:text").keypress(function(event) {
             if (event.keyCode == 13) {
                 event.preventDefault();
                 return false;
             }
         });
-
+        
         function statistics() {
             $.ajax({
                 type: 'GET',      
@@ -44,16 +44,16 @@ jQuery(function() {
                         
                         var allStatElement = document.getElementById("allStats").getContext('2d');
                         var allStats = new Chart(allStatElement, {
-                          type: 'pie',
-                          data: {
+                            type: 'pie',
+                            data: {
                             labels: ["Clean", "Severe", "In Progress"],
                             datasets: [{
-                              backgroundColor: [
+                                backgroundColor: [
                                 "#2ecc71",
                                 "#e74c3c",
                                 "#f1c40f"
                               ],
-                              data: [clean_stat, severe_stat, progress_stat]
+                            data: [clean_stat, severe_stat, progress_stat]
                             }]
                           }
                         });
@@ -65,7 +65,6 @@ jQuery(function() {
                 }               
             });
         }
-
 
         // Report Feeds Method
         reportFeeds = function() {
@@ -122,10 +121,10 @@ jQuery(function() {
                 google.maps.event.addListener(marker, 'mouseover', function() {
                     popwindow.setContent('<div style="padding-left:20px;"><center><img src="https://t3.ftcdn.net/jpg/00/88/69/84/240_F_88698445_zHpZyrhMreVVWBs1WP3iLiTwidTfn4Jd.jpg" height="120px"></center><hr><b>Description:</b> ' + MapTitle + '</div>');
                     setTimeout(function() { popwindow.open(map, marker) }, 100);
-
+                   
                 });
                 google.maps.event.addListener(marker, 'mouseout', function() {
-                    popwindow.close();
+                    setTimeout(function() { popwindow.close(map, marker) }, 450);
                 });
             }
            
@@ -157,14 +156,14 @@ jQuery(function() {
             }
             
             google.maps.event.addListener(marker, 'click', function() {
-                    if(loggedInUser === owner) {
-                        infowindow.open(map,marker);
-                    }
+                if(loggedInUser === owner) {
+                    infowindow.open(map,marker);
+                }
             });
              
             if(InfoOpenDefault)
             {
-              infowindow.open(map,marker);
+                infowindow.open(map,marker);
             }
         }
 
@@ -183,9 +182,9 @@ jQuery(function() {
 		          success:function(data){
 		                map_initialize();
 		            },
-		            error:function (xhr, ajaxOptions, thrownError){
-		            	console.log("Something went wrong!");
-		                alert(thrownError);
+		          error:function (xhr, ajaxOptions, thrownError){
+		              console.log("Something went wrong!");
+		              alert(thrownError);
 		            }
 		        });
         	}
@@ -202,14 +201,14 @@ jQuery(function() {
 	              url: "update_status_reports",
 	              data: myData,
 	              success:function(data){
-	                    map_initialize();
-	                },
-	                error:function (xhr, ajaxOptions, thrownError){
-	                	console.log("Something went wrong!");
-	                    alert(thrownError);
-	                }
-	            });
-        	}
+	                  map_initialize();
+	              },
+	              error:function (xhr, ajaxOptions, thrownError){
+	                  console.log("Something went wrong!");
+	                  alert(thrownError);
+	              }
+	         });
+            }
         	else {
                 $.ajax({
                     type: 'GET',      
@@ -236,9 +235,9 @@ jQuery(function() {
         	}
         }
 
-        var mapCenter = new google.maps.LatLng(28.6139, 77.2090);
+        var mapCenter = new google.maps.LatLng(22.9734, 80.6569);
         var map;
-
+        var mapZoom; 
         map_initialize();
         function map_initialize()
         {
@@ -266,19 +265,21 @@ jQuery(function() {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     };
-
+    
                     infWindow.setPosition(pos);
                     infWindow.setContent('<center><p>Umm, found you :) Is there a problem<br> here ? Right click on the map and report now!</p><center>');
                     map.setCenter(pos);
                 }, function() {
                     handleLocationError(true, infWindow, map.getCenter());
               });
-            } else {
+            } 
+            else {
                   handleLocationError(false, infWindow, map.getCenter());
             }
-
+    
+            var markerClusterOptions = {gridSize: 100, maxZoom: 15, imagePath: 'http://i.imgur.com/gMImCGV.png'};
             var marker_count=0;
-
+            var allMarkerCoordinates=[];
             $.ajax({
                 type: 'GET',      
                 url:  'fetch_status_reports',
@@ -290,6 +291,11 @@ jQuery(function() {
                      	var id = data[i].id;
                      	var loc = data[i].coordinates.split(',');
                      	var point = new google.maps.LatLng(parseFloat(loc[0]),parseFloat(loc[1]));
+                     	var temp = new google.maps.Marker({
+                     	           position: point,
+                     	           icon: 'http://i.imgur.com/K4uSMCP.png' });
+                     	allMarkerCoordinates.push(temp);
+                     	         
                      	var owner = data[i].owner;
 
                         imageType = '';
@@ -321,9 +327,10 @@ jQuery(function() {
                      	
                     createStatusReports(point, name, formData, owner, false, false, false, imageType);
 					        });
+					var markerCluster = new MarkerClusterer(map, allMarkerCoordinates,markerClusterOptions);        
                 }                  
             });
-
+            
             function handleLocationError(browserHasGeolocation, infWindow, pos) {
                 infWindow.setPosition(pos);
                 infWindow.setContent(browserHasGeolocation ?
@@ -357,7 +364,6 @@ jQuery(function() {
 		            if (e.which == 13) {
 		                infowindow.close();
 		                var firstResult = $(".pac-container .pac-item:first").text();
-		                
 		                var geocoder = new google.maps.Geocoder();
 		                geocoder.geocode({"address":firstResult }, function(results, status) {
 		                    if (status == google.maps.GeocoderStatus.OK) {
@@ -365,7 +371,6 @@ jQuery(function() {
 		                            lng = results[0].geometry.location.lng(),
 		                            placeName = results[0].address_components[0].long_name,
 		                            latlng = new google.maps.LatLng(lat, lng);
-		                        
 		                        moveStatusPointer(placeName, latlng);
 		                        $("input").val(firstResult);
 		                    }
@@ -409,13 +414,12 @@ jQuery(function() {
                                 });
                             }
                             else {
-                                console.log('aa');
-                                $('#myAccount').modal({
-                                    show: true
-                                })
+                                // TBD
                             }
                         }
-                });                           
+                });   
+            
+    
             }
     });
 });
