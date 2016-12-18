@@ -90,8 +90,6 @@ jQuery(function() {
             });
         }
 
-        contributions();
-
         function contributions() {
 
             $.ajax({
@@ -239,7 +237,7 @@ jQuery(function() {
                         });
                     }
                     else {
-                        feedBoxData = '<div><center><img src="http://i.imgur.com/KUsOXVu.png" style="padding-top:90px;" height="20%" width="20%"><br><br><p style="font-size:12px; color: #2f4f4f">Eh! It seems like you are the first one here :)<br>Start by searching for the place you would like to report for<br>and drop a status report!<br>or<br>Click on the help icon above to get started.</p></center></div>'
+                        feedBoxData = '<div><center><img src="https://i.imgur.com/KUsOXVu.png" style="padding-top:90px;" height="20%" width="20%"><br><br><p style="font-size:12px; color: #2f4f4f">Eh! It seems like you are the first one here :)<br>Start by searching for the place you would like to report for<br>and drop a status report!<br>or<br>Click on the help icon above to get started.</p></center></div>'
                     }
                     $("#feedBox").html(feedBoxData);
                 }
@@ -356,11 +354,19 @@ jQuery(function() {
         	else {
                 $.ajax({
                     type: 'GET',      
-                    url:  'http://maps.googleapis.com/maps/api/geocode/json?latlng=' + mLatLang + '&sensor=false',
+                    url:  'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + mLatLang + '&sensor=false',
                     dataType: 'json',
                     success: function(data) { 
+                        var address = data.results[0].formatted_address;
+                        var searchAddressComponents = data.results[0].address_components;
+                        var pincode = "Unknown";
+                        $.each(searchAddressComponents, function(){
+                            if(this.types[0]=="postal_code"){
+                                pincode=this.long_name;
+                            }
+                        });
                         var myData = { json_data: JSON.stringify({'csrfmiddlewaretoken': '{{csrf_token}}',
-                            'name':mName,'latlang' : mLatLang, 'type' : mType, 'owner': owner, 'address': data.results[0].formatted_address})  };    
+                            'name':mName,'latlang' : mLatLang, 'type' : mType, 'owner': owner, 'address': address, 'pincode': pincode})  };    
                         $.ajax({
                           type: "POST",
                           url: "save_new_status_reports",
@@ -387,6 +393,7 @@ jQuery(function() {
         {
             statistics();
             reportFeeds();
+            contributions();
 
             var googleMapOptions =
             {
@@ -422,7 +429,7 @@ jQuery(function() {
                   handleLocationError(false, infWindow, map.getCenter());
             }
     
-            var markerClusterOptions = {gridSize: 100, maxZoom: 15, imagePath: 'http://i.imgur.com/gMImCGV.png'};
+            var markerClusterOptions = {gridSize: 100, maxZoom: 15, imagePath: 'https://i.imgur.com/gMImCGV.png'};
             var marker_count=0;
             var allMarkerCoordinates=[];
             $.ajax({
@@ -438,7 +445,7 @@ jQuery(function() {
                      	var point = new google.maps.LatLng(parseFloat(loc[0]),parseFloat(loc[1]));
                      	var temp = new google.maps.Marker({
                      	           position: point,
-                     	           icon: 'http://i.imgur.com/K4uSMCP.png' });
+                     	           icon: 'https://i.imgur.com/K4uSMCP.png' });
                      	allMarkerCoordinates.push(temp);
                      	         
                      	var owner = data[i].owner;
@@ -539,24 +546,15 @@ jQuery(function() {
                         marker_count++;
                         if(marker_count==1) {
                             if(loggedInUser !== "AnonymousUser") {
-                                $.ajax({
-                                    type: 'GET',      
-                                    url:  'http://ws.geonames.org/countryCodeJSON?lat=' + event.latLng.lat() + '&lng=' + event.latLng.lng() + '&username=mycleanindia',
-                                    dataType: 'json',
-                                    success: function(data) { 
-                                        if(data.countryName == 'India') {
-                                            var formData = '<p><div class="marker-edit">'+
-                                            '<form method="POST" name="SaveMarker" id="SaveMarker">'+
-                                            '<label for="pName"><span>Description: </span><input type="text" required name="pName" class="save-name" placeholder="" maxlength="40" /></label>&nbsp&nbsp'+
-                                            '<label for="pType"><span>Status: </span> <select name="pType" class="save-type"><option value="Clean">Clean</option><option value="In Progress">In Progress</option>'+
-                                            '<option value="Severe">Severe</option></select></label><input type="hidden" class="status-id" name="status-id" value="new"/>'+
-                                            '</form>'+
-                                            '</div></p><button name="save-marker" class="save-marker">Save Location Status</button>';
+                                var formData = '<p><div class="marker-edit">'+
+                                '<form method="POST" name="SaveMarker" id="SaveMarker">'+
+                                '<label for="pName"><span>Description: </span><input type="text" required name="pName" class="save-name" placeholder="" maxlength="40" /></label>&nbsp&nbsp'+
+                                '<label for="pType"><span>Status: </span> <select name="pType" class="save-type"><option value="Clean">Clean</option><option value="In Progress">In Progress</option>'+
+                                '<option value="Severe">Severe</option></select></label><input type="hidden" class="status-id" name="status-id" value="new"/>'+
+                                '</form>'+
+                                '</div></p><button name="save-marker" class="save-marker">Save Location Status</button>';
 
-                                            createStatusReports(event.latLng, 'New Location Status', formData, loggedInUser, true, true, true, "https://i.imgur.com/HBBgM43.png");
-                                        }
-                                    }
-                                });
+                                createStatusReports(event.latLng, 'New Location Status', formData, loggedInUser, true, true, true, "https://i.imgur.com/HBBgM43.png");
                             }
                             else {
                                 // TBD

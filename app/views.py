@@ -116,9 +116,10 @@ def save_new_status_reports(request):
         coordinates=data_dict['latlang']
         owner=data_dict['owner']
         address=data_dict['address']
+        pincode=data_dict['pincode']
         p = statusReport(
             description=description, status=status, coordinates=coordinates,
-             owner=owner, address=address)
+             owner=owner, address=address, pincode=pincode)
         p.save()
         return JsonResponse('Success', safe=False)
 
@@ -179,7 +180,7 @@ def fetch_contributions(request):
                             created_at__month=temp).filter(
                             owner=request.user.get_username()).count())
                     record[months[temp]] = record.pop(temp)
-            print(record)
+            #print(record)
             return JsonResponse(record, safe=False)
 
 
