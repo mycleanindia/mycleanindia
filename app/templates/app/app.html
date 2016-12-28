@@ -15,196 +15,30 @@
         <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?key=AIzaSyAO9viVY0VNfHCfyAVQ_nfmCuz6CVb3RZI&libraries=places"></script>  
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>        
-        <script>
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-            ga('create', 'UA-88157956-1', 'auto');
-            ga('send', 'pageview');
-        </script>
         <script type="text/javascript" src="https://raw.githubusercontent.com/mycleanindia/js-marker-clusterer/gh-pages/src/markerclusterer.js"></script>
+        {% include "app/scripts-head.html" %}
     </head>
-<body>
-    <div id="fb-root"></div>
-    <script>(function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.8&appId=307036199649657";
-        fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
-    </script>
-    <script id="_webengage_script_tag" type="text/javascript">
-        var webengage; !function(w,e,b,n,g){function o(e,t){e[t[t.length-1]]=function(){r.__queue.push([t.join("."),arguments])}}var i,s,r=w[b],z=" ",l="init options track screen onReady".split(z),a="feedback survey notification".split(z),c="options render clear abort".split(z),p="Open Close Submit Complete View Click".split(z),u="identify login logout setAttribute".split(z);if(!r||!r.__v){for(w[b]=r={__queue:[],__v:"6.0",user:{}},i=0;i<l.length;i++)o(r,[l[i]]);for(i=0;i<a.length;i++){for(r[a[i]]={},s=0;s<c.length;s++)o(r[a[i]],[a[i],c[s]]);for(s=0;s<p.length;s++)o(r[a[i]],[a[i],"on"+p[s]])}for(i=0;i<u.length;i++)o(r.user,["user",u[i]]);setTimeout(function(){var f=e.createElement("script"),d=e.getElementById("_webengage_script_tag");f.type="text/javascript",f.async=!0,f.src=("https:"==e.location.protocol?"https://ssl.widgets.webengage.com":"http://cdn.widgets.webengage.com")+"/js/webengage-min-v-6.0.js",d.parentNode.insertBefore(f,d)})}}(window,document,"webengage");
-
-        webengage.init("d3a4a822");
-    </script> 
-    <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <a class="navbar-brand" style="font-family: 'Pacifico', cursive; outline:none; color: #c12267" href="/app"><img src="https://i.imgur.com/KUsOXVu.png" style="height:25px;width:25px; display:inline; margin-top:-3px; outline:none"> mycleanindia</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <div class="col-sm-7 col-md-7">
-                <form class="navbar-form" role="search">
-                <div class="input-group">
-                    <input id="searchTextField" type="text" class="form-control" style="margin-top:2px; border-radius: 16px; border: 1px #c12267 solid; width:270%;height: 31px;" placeholder="Search for yards, pavements, monuments or your own neighbourhood ...">
-                    <div class="input-group-btn">
-                        <!--button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button-->
-                    </div>
+    <body>
+        <div id="cardContainer" class="container">
+            <div class="row">
+                <div class="col-md-8 gmap">
+                    <div id="google_map"></div>
                 </div>
-                </form>
-            </div>
-            <div id="account">
-                <ul class="nav navbar-nav navbar-right">
-                    {% if request.user.is_authenticated %}
-                        <li class="dropdown pull-right">
-                            <script type="text/javascript">{% if request.user %}loggedInUser = "{{request.user}}"{% else %}loggedInUser = null;{% endif %}</script> 
-                            <a href="#" style="color: #c12267" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{request.user.first_name}} <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-
-                                
-                                <li><a style="color: #c12267" data-toggle="modal" href="#dashboard">Dashboard</a></li>
-                                <li><a style="color: #c12267" href="/logout">Logout</a></li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <button type="button" data-toggle="modal" href="#myAccount" class="button btn btn-sm btn-success" style="margin-top:10px; border-radius: 16px; border: 1px #c12267 solid; background-color: #FFFFFF; color: #c12267; height: 31px;"aria-expanded="false">Sign in</button>
-                    {% endif %}
-                </ul>
-            </div>
-            <div id="tools" style="margin-top: 6px; margin-right: 10px;">
-                <ul class="nav navbar-nav navbar-right">
-                    <a data-toggle="modal" style="color: white; padding-right: 13px; outline:none" href="/"><span style="top:11px" class="glyphicon glyphicon-home" aria-hidden="true"></span></a>
-                    <a data-toggle="modal" style="color: white; padding-right: 13px; outline:none" href="#help"><span style="top:11px" class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a>
-                    <a id="reload" style="color: white; padding-right: 13px; outline:none" href="#"><span style="top:11px" class="glyphicon glyphicon-repeat rotate" aria-hidden="true"></span></a>
-                    <a data-toggle="modal" style="color: white; padding-right: 30px; outline:none" href="#stats"><span style="top:11px" class="glyphicon glyphicon-stats" aria-hidden="true"></span></a>
-                </ul>
-            </div>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
-
-    <div id="cardContainer" class="container">
-        <div class="row">
-            <div class="col-md-8 gmap">
-                <div id="google_map"></div>
-            </div>
-            <div id="feedBox" class="col-md-4 feeds">
-            </div>
-        </div>
-    </div>
-
-    <div id="myAccount" class="modal" role="dialog">
-      <div class="modal-dialog" style="margin-top: 10px;">
-
-        <div class="modal-content">
-            <div class="modal-body">
-                <center>
-                <a style="font-family: 'Pacifico', cursive; text-decoration:none; color: #c12267" href="#"><img src="https://i.imgur.com/KUsOXVu.png" style="height:25px;width:25px; display:inline; margin-top:0px;"> mycleanindia</a><hr>
-                <p>
-                    <a class="btn btn-primary social-login-btn social-facebook" href="/login/facebook"><i class="fa fa-facebook"></i></a>
-                    <a class="btn btn-primary social-login-btn social-twitter" href="/login/twitter"><i class="fa fa-twitter"></i></a>
-                    </p>
-                    <p>
-                    <a class="btn btn-primary social-login-btn social-linkedin" href="/login/linkedin-oauth2"><i class="fa fa-linkedin"></i></a>
-                    <a class="btn btn-primary social-login-btn social-google" href="/login/google-oauth2"><i class="fa fa-google-plus"></i></a>
-                </p>
-                <p style="font-size: 11px;">Sign in using any of the services listed above and start taking care of your place.<br>Having some concern with your privacy ? <a data-toggle="modal" href="#privacyPolicy" style="text-decoration:none">Here you go!</a></p>
-                </center>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <div id="privacyPolicy" class="modal" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <center>
-                    <a style="font-family: 'Delius Unicase', cursive; text-decoration:none" href="/">Privacy Policy</a><br><br>
-                    <p><b>MyCleanIndia</b> collects some personal data from its users.<br>The data are collected and processed for the purposes set out below.<br>Among the data that we may collect there are: cookie, browsing and usage data, various types of data, geographic position, email, name and username.<br><br>Other personal data collected may be highlighted by other sections of the app or by dedicated explanation text, in the moment when the data collection happens. The personal data may be freely inserted by the user or the data subject, or collected automatically when using the application.</p>
-                    </center>
+                <div id="feedBox" class="col-md-4 feeds">
                 </div>
             </div>
         </div>
-    </div>
 
+        {% include "app/navigation.html" %}
+        {% include "app/donate.html" %}
+        {% include "app/help.html" %}
+        {% include "app/stats.html" %}
+        {% include "app/myaccount.html" %}
+        {% include "app/dashboard.html" %}
+        {% include "app/contact.html" %}
+        {% include "app/about.html" %}
+        {% include "app/scripts-body.html" %}
+        {% include "app/footer.html" %}
 
-    <div id="dashboard" class="modal" role="dialog">
-        <div class="modal-dialog" style="margin-top: 10px;">
-            <div class="modal-content">
-                <div class="modal-body" style="width: 800px;">
-                    <ul class="nav nav-tabs">
-                        <li class="active"><a style="outline: none;" href="#myReports" data-toggle="tab">My Reports</a></li>
-                        <li><a style="outline: none;" href="#contributionChart" data-toggle="tab">Contribution Graph</a></li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane fade in active" id="myReports">
-                            <br>
-                            <div class="myReportBox">
-                                <table class="table-striped table table-bordered" id="reportDataTable"></table>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="contributionChart">
-                            <br><canvas id="myContributions"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="help" class="modal" role="dialog">
-        <div class="modal-dialog" style="margin-top: 10px;">
-            <div class="modal-content">
-                <div class="modal-body">
-                <center>
-                <a style="font-family: 'Delius Unicase', cursive; text-decoration:none" href="#">HOW TO USE ?</a><hr>
-                </center>
-                <ul>It is as simple as sending a text message. Just follow the four easy steps given below and help our country in the most effective way.</ul>
-                <ul>
-                    <li>Log into your account by simple clicking on <b>Sign in</b> button on the top right of your screen.</li>
-                    <li>Search for the place which you would like to report for.</li>
-                    <li>Right click on the place and drop a status marker and select the cleanliness condition.</li>
-                    <li>Save the status!</li>
-                </ul> 
-                <ul>Now wasn't that a piece of cake ? Tell your friends and family too and contribute your few seconds to the nation.</ul>
-                <center>
-                    <a style="padding-right:3px;" href="http://www.facebook.com/sharer.php?u=https://mycleanindia.herokuapp.com/" target="_blank">
-                        <img height="25px" width="25px" src="https://simplesharebuttons.com/images/somacro/facebook.png" alt="Facebook" />
-                    </a>
-                    <a style="padding-right:3px;" href="https://plus.google.com/share?url=https://mycleanindia.herokuapp.com/" target="_blank">
-                        <img height="25px" width="25px" src="https://simplesharebuttons.com/images/somacro/google.png" alt="Google+" />
-                    </a>
-                    <a style="padding-right:3px;" href="http://www.linkedin.com/shareArticle?mini=true&amp;url=https://mycleanindia.herokuapp.com/" target="_blank">
-                        <img height="25px" width="25px" src="https://simplesharebuttons.com/images/somacro/linkedin.png" alt="Linkedin" />
-                    </a>
-                    <a style="padding-right:3px;" href="https://twitter.com/share?url=https://mycleanindia.herokuapp.com/" target="_blank">
-                        <img height="25px" width="25px" src="https://simplesharebuttons.com/images/somacro/twitter.png" alt="Twitter" />
-                    </a>
-                </center>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="stats" class="modal" role="dialog">
-        <div class="modal-dialog" style="margin-top: 10px;">
-            <div class="modal-content">
-                <div class="modal-body">
-                <center>
-                <a style="font-family: 'Delius Unicase', cursive; text-decoration:none" href="#">Statistics</a><hr>
-                <canvas id="allStats"></canvas>
-                <p>Refresh the map canvas to view all time report count.</p>
-                </center>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</body>
+    </body>
 </html>

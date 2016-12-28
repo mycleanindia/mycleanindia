@@ -1,0 +1,24 @@
+{% load static %}
+<div id="dashboard" class="modal" role="dialog">
+    <div class="modal-dialog" style="margin-top: 10px;">
+        <div class="modal-content">
+            <div class="modal-body" style="width: 800px;">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a style="outline: none;" href="#myReports" data-toggle="tab">My Reports</a></li>
+                    <li><a style="outline: none;" href="#contributionChart" data-toggle="tab">Contribution Graph</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade in active" id="myReports">
+                        <br>
+                        <div class="myReportBox">
+                            <table class="table-striped table table-bordered" id="reportDataTable"></table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="contributionChart">
+                        <br><canvas id="myContributions"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

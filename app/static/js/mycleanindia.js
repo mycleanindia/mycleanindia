@@ -33,21 +33,21 @@ jQuery(function() {
 		$("input:text").keypress(function(event) {
             if (event.keyCode == 13) {
                 event.preventDefault();
-                $('#cardContainer').fadeTo("slow",1);
+                $('#google_map').fadeTo("slow",1);
                 return false;
             }
         });
 
         $('#searchTextField').on('focusin',function(e){
-            $('#cardContainer').fadeTo("slow",0.3);
+            $('#google_map').fadeTo("slow",0.3);
         });
 
         $('#searchTextField').on('focusout',function(e){
-            $('#cardContainer').fadeTo("slow",1);
+            $('#google_map').fadeTo("slow",1);
         });
 
         $('#searchTextField').on('input',function(e){
-            $('#cardContainer').fadeTo("slow",0.3);
+            $('#google_map').fadeTo("slow",0.3);
         });
 
         fetch_my_reports();
