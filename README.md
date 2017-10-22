@@ -20,3 +20,8 @@ A toolkit which gives us the power to analyse the health situation in the countr
 6. Finally type `python manage.py runserver <port>`.
 
 The port argument is optional. If the terminal throws an error of port  being unavailable, please add the port argument and execute the command. (Like,  `python manage.py runserver 8081`.
+
+## Keeping in touch
+
+1. [Slack](https://mycleanindia.slack.com).
+2. Social media: [Twitter](https://twitter.com/mycleanindiaapp), [Facebook](https://www.facebook.com/mycleanindiaapp).
