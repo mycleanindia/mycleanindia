@@ -3,3 +3,4 @@ psycopg2==2.4.5
 gunicorn
 whitenoise
 python-social-auth
+social-auth-app-django
