@@ -4,3 +4,4 @@ gunicorn
 whitenoise
 python-social-auth
 social-auth-app-django
+pyjwkest
