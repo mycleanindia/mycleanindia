@@ -1,8 +1,8 @@
-# MyCleanIndia
+# MyCleanIndia <a href="https://koding.com/"> <img src="https://koding-cdn.s3.amazonaws.com/badges/made-with-koding/v1/koding_badge_ReadmeLight.png" srcset="https://koding-cdn.s3.amazonaws.com/badges/made-with-koding/v1/koding_badge_ReadmeLight.png 1x, https://koding-cdn.s3.amazonaws.com/badges/made-with-koding/v1/koding_badge_ReadmeLight@2x.png 2x" alt="Made with Koding" /> </a>
 A toolkit which gives us the power to analyse the health situation in the country by effectively mapping the location with it's current status and generating reports over it.
 
 <p align="center">
-    <img src="https://i.imgsafe.org/ec64e37bd8.png">
+    <img src="https://user-images.githubusercontent.com/11073943/34643589-acee1936-f34c-11e7-999f-77b8e2bf62c7.png">
 </p>
 
 ## Installation
