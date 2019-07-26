@@ -1,4 +1,4 @@
-# MyCleanIndia <a href="https://koding.com/"> <img src="https://koding-cdn.s3.amazonaws.com/badges/made-with-koding/v1/koding_badge_ReadmeLight.png" srcset="https://koding-cdn.s3.amazonaws.com/badges/made-with-koding/v1/koding_badge_ReadmeLight.png 1x, https://koding-cdn.s3.amazonaws.com/badges/made-with-koding/v1/koding_badge_ReadmeLight@2x.png 2x" alt="Made with Koding" /> </a>
+# MyCleanIndia 
 A toolkit which gives us the power to analyse the health situation in the country by effectively mapping the location with it's current status and generating reports over it.
 
 <p align="center">
